@@ -10,6 +10,9 @@ class Jora:
         self.search = search
         self.location = location
 
-    def get_results(self):
+    """ def get_results(self, region):
+        if (region == '*'): """
+
+    def request(self):
         get(f'https://{self.region}.{self.url}/j?q={self.search}&l={self.location}')
         
