@@ -1,1 +1,1 @@
-from . import manager
+from . import manager as Manager
