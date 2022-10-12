@@ -13,7 +13,7 @@ class Jora:
         parsed_result = list()
 
         if (self.region == '*' or isinstance(self.region, list)):
-            region_list = self.predefined_regions if self.region == '*' else self.region
+            region_list = self.predefined_regions if self.region[0] == '*' else self.region
 
             for region in region_list:
                 self.region = region.strip()
@@ -56,9 +56,9 @@ class Jora:
             jobs.append({
                 "title": title_tag.string,
                 "link": f'https://{self.region}.{self.url}{title_tag["href"]}',
-                "company": company.string,
-                "location": location.string,
-                "summary": summary.string
+                "company": company.string if company else '',
+                "location": location.string if location else '',
+                "summary": summary.string if summary else ''
             })
 
         return jobs
