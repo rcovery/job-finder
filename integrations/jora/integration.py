@@ -16,7 +16,10 @@ class Jora:
             region_list = self.predefined_regions if self.region == '*' else self.region
 
             for region in region_list:
-                data = self.request(region)
+                self.region = region
+
+                data = self.request()
+
                 parsed_result.extend(self.parse(data))
         else:
             data = self.request()
@@ -25,8 +28,8 @@ class Jora:
         return parsed_result
 
 
-    def request(self, region = None):
-        url = f'https://{region or self.region}.{self.url}/j'
+    def request(self):
+        url = f'https://{self.region}.{self.url}/j'
         params = {
             "q": self.search,
             "l": self.location
@@ -52,7 +55,7 @@ class Jora:
 
             jobs.append({
                 "title": title_tag.string,
-                "link": title_tag['href'],
+                "link": f'https://{self.region}.{self.url}{title_tag["href"]}',
                 "company": company.string,
                 "location": location.string,
                 "summary": summary.string
