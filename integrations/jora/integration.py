@@ -16,7 +16,7 @@ class Jora:
             region_list = self.predefined_regions if self.region == '*' else self.region
 
             for region in region_list:
-                self.region = region
+                self.region = region.strip()
 
                 data = self.request()
 
