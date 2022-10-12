@@ -2,15 +2,22 @@ from .jora import Jora
 
 class Manager:
     def __init__(self, integration = 'jora'):
-        match (integration):
-            case 'jora':
-                pass
-            case _:
-                self.instance = Jora()
+        self.integration = integration
 
-    def get(self):
-        self.instance.request()
+        if (integration == 'jora'):
+            self.instance = Jora()
+        else:
+            self.instance = Jora()
 
-    @property
-    def region(self, region = 'us'):
-        self.instance.region = region
+    def get(self, search = None, region = None, location = None):
+        if (search):
+            self.instance.search = search
+
+        if (region):            
+            self.instance.region = region
+
+        if (self.integration == 'jora'):
+            if (location):
+                self.instance.location = location
+
+        return self.instance.get_results()

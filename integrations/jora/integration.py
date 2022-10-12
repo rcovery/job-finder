@@ -1,4 +1,5 @@
 from requests import get
+from bs4 import BeautifulSoup
 
 class Jora:
     url = 'jora.com'
@@ -8,11 +9,45 @@ class Jora:
 
     predefined_regions = ['us', 'ca', 'br', 'uk', 'pt']
 
-    # def __init__(self):
+    def get_results(self):
+        if (self.region == '*' or isinstance(self.region, list)):
+            return
 
-    # def get_results(self, region, search = '', location = ''):
-    #     if (region == '*'):
+        data = self.request()
+        return self.parse(data)
 
-    def request(self):
-        get(f'https://{self.region}.{self.url}/j?q={self.search}&l={self.location}')
-        
+
+    def request(self, region = None):
+        url = f'https://{region or self.region}.{self.url}/j'
+        params = {
+            "q": self.search,
+            "l": self.location
+        }
+        headers = {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 RuxitSynthetic/1.0 v1044840544831109447 t5534040873462942519 ath5ee645e0 altpriv cvcv=2 smf=0"
+        }
+
+        response = get(url, params=params, headers=headers, timeout = 30)
+        return response.text
+    
+    def parse(self, data):
+        parsed_html = BeautifulSoup(data, 'html.parser')
+        job_cards = parsed_html.select('[class~=job-card]')
+
+        jobs = list()
+
+        for card in job_cards:
+            title_tag = card.select_one('.job-link')
+            company = card.select_one('.job-company')
+            location = card.select_one('.job-location')
+            summary = card.select_one('.job-abstract')
+
+            jobs.append({
+                "title": title_tag.string,
+                "link": title_tag['href'],
+                "company": company.string,
+                "location": location.string,
+                "summary": summary.string
+            })
+
+        return jobs
