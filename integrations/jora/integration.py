@@ -10,11 +10,19 @@ class Jora:
     predefined_regions = ['us', 'ca', 'br', 'uk', 'pt']
 
     def get_results(self):
-        if (self.region == '*' or isinstance(self.region, list)):
-            return
+        parsed_result = list()
 
-        data = self.request()
-        return self.parse(data)
+        if (self.region == '*' or isinstance(self.region, list)):
+            region_list = self.predefined_regions if self.region == '*' else self.region
+
+            for region in region_list:
+                data = self.request(region)
+                parsed_result.extend(self.parse(data))
+        else:
+            data = self.request()
+            parsed_result = self.parse(data)
+
+        return parsed_result
 
 
     def request(self, region = None):
